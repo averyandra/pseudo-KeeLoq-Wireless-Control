@@ -55,7 +55,8 @@ The receiver verifies the checksum, confirms the DEVICE_ID, and checks if the in
 ### Transmitter (PIC16F636)
 Compiled using Microchip XC8 v4.00 on Fedora Linux.
 ```bash
-xc8-cc -mcpu=16f636 -mdfp="path/to/dfp/xc8" -O2 remote.c
+/path/to/xc8-cc -mcpu=16f636 -mdfp="/path/to/dfp/xc8" -O2 remotepic.c -o build/remotepic.hex
+
 ```
 
 **Note: Flashing requires a modified ardpicprog host application to bypass strict Device ID revision checks for Rev 5 silicons (ID: 0x10A5). Ensure you use the --erase flag during flashing.
