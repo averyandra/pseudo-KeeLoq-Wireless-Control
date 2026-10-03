@@ -32,7 +32,7 @@ This project implements a custom "Pseudo-KeeLoq" UART-based rolling code protoco
 ## Schematics & Pinout
 Please refer to the visual schematics below for the exact wiring routes between the PIC16F636, the push buttons, the RF modulator, and the power source. 
 
-![Tx Schematic](docs/images/tx_schematic.png)
+![Tx Schematic](docs/images/remote_circuit.png)
 
 ### Reference Documents
 * [PIC16F636 Official Datasheet (Microchip)](https://www.microchip.com/wwwproducts/en/PIC16F636)
