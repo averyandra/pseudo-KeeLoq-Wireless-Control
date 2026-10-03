@@ -19,7 +19,6 @@
 void eeprom_write_byte(uint8_t addr, uint8_t data) {
     EEADR = addr;
     EEDAT = data;
-    EECON1bits.EEPGD = 0;
     EECON1bits.WREN = 1;
     INTCONbits.GIE = 0;
     EECON2 = 0x55;
@@ -32,7 +31,6 @@ void eeprom_write_byte(uint8_t addr, uint8_t data) {
 
 uint8_t eeprom_read_byte(uint8_t addr) {
     EEADR = addr;
-    EECON1bits.EEPGD = 0;
     EECON1bits.RD = 1;
     return EEDAT;
 }
@@ -65,11 +63,13 @@ void main(void) {
 
     // RA0, RA1, RA2, RA4, RA5 as button inputs
     TRISA = 0b00110111;     
-    ANSEL = 0b00000000;     
+    
+    // Matikan modul komparator agar RA0, RA1, RA2 menjadi pin Digital
+    CMCON0 = 0x07;     
     
     // Enable Internal Pull-ups so external resistors are not needed
     OPTION_REGbits.nRAPU = 0;
-    WPUA = 0b00110111;
+    WPUDA = 0b00110111;
     
     IOCA = 0b00110111;      // Interrupt-on-change active
     INTCONbits.RAIE = 1;
@@ -86,10 +86,12 @@ void main(void) {
             // 1. Fetch & Increment Rolling Counter from EEPROM
             uint8_t cnt_hi = eeprom_read_byte(0);
             uint8_t cnt_lo = eeprom_read_byte(1);
-            uint16_t counter = (cnt_hi << 8) | cnt_lo;
+            
+            // Perbaikan warning bit-shifting
+            uint16_t counter = ((uint16_t)cnt_hi << 8) | cnt_lo;
             counter++;
-            eeprom_write_byte(0, (counter >> 8));
-            eeprom_write_byte(1, (counter & 0xFF));
+            eeprom_write_byte(0, (uint8_t)(counter >> 8));
+            eeprom_write_byte(1, (uint8_t)(counter & 0xFF));
 
             // 2. Calculate Security Checksum
             uint8_t checksum = DEVICE_ID_HI ^ DEVICE_ID_LO ^ cnt_hi ^ cnt_lo ^ buttons;
